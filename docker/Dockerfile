@@ -11,6 +11,10 @@ RUN pip3 install psutil
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Copy the entrypoint script into the container
+COPY scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 ARG USER=ros
 RUN useradd -m -s /bin/bash $USER && echo "$USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 USER $USER
@@ -21,3 +25,6 @@ WORKDIR /home/$USER/ros2_ws/src
 WORKDIR /home/$USER/ros2_ws
 
 RUN echo "source /opt/ros/humble/setup.bash" >> /home/$USER/.bashrc
+
+# Set the entrypoint
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
